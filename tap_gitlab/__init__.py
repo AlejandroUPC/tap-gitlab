@@ -206,7 +206,7 @@ RESOURCES = {
         'replication_method': 'FULL_TABLE',
     },
     'merge_request_notes': {
-        'url2': '/projects/{id}/merge_requests/{secondar_id}/notes?order_by=updated_at={start_date}',
+        'url': '/projects/{id}/merge_requests/{secondar_id}/notes?order_by=updated_at={start_date}',
         'schema': load_schema('merge_request_notes'),
         'key_properties': ['id', 'merge_request_iid'],
         'replication_method': 'INCREMENTAL',
