@@ -204,6 +204,13 @@ RESOURCES = {
         'schema': load_schema('group_variables'),
         'key_properties': ['group_id', 'key'],
         'replication_method': 'FULL_TABLE',
+    },
+    'merge_request_notes': {
+        'url2': '/projects/{id}/merge_requests/{secondar_id}/notes?order_by=updated_at={start_date}',
+        'schema': load_schema('merge_request_notes'),
+        'key_properties': ['id', 'merge_request_iid'],
+        'replication_method': 'INCREMENTAL',
+        'replication_keys': ['updated_at'],
     }
 }
 
@@ -469,6 +476,7 @@ def sync_merge_requests(project):
             # And then sync all the commits for this MR
             # (if it has changed, new commits may be there to fetch)
             sync_merge_request_commits(project, transformed_row)
+            sync_merge_request_notes(project, transformed_row)
 
     singer.write_state(STATE)
 
@@ -491,6 +499,23 @@ def sync_merge_request_commits(project, merge_request):
 
             singer.write_record("merge_request_commits", transformed_row, time_extracted=utils.now())
 
+def sync_merge_request_notes(project, merge_request):
+    entity = "merge_request_notes"
+    stream = CATALOG.get_stream(entity)
+    if stream is None or not stream.is_selected():
+        return
+    state_key = "project_{}_merge_request_notes".format(project['id'])
+    start_date=get_start(state_key)
+    mdata = metadata.to_map(stream.metadata)
+
+    url = get_url(entity="merge_request_notes", id=project['id'], secondary_id=merge_request['iid'], start_date=start_date) 
+    with Transformer(pre_hook=format_timestamp) as transformer:
+        for row in gen_request(url):
+            row['merge_request_iid'] =  merge_request['iid']
+            row['author_id'] = row['author']['id']
+            transformed_row = transformer.transform(row, RESOURCES["merge_request_notes"]["schema"], mdata)
+            singer.write_record("merge_request_notes", transformed_row, time_extracted=utils.now())
+            utils.update_state(STATE, state_key, row['updated_at'])
 def sync_releases(project):
     entity = "releases"
     stream = CATALOG.get_stream(entity)
