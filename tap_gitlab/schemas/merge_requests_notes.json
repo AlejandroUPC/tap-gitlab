@@ -25,6 +25,9 @@
                 "null"
             ]
         },
+        "merge_request_iid": {
+            "type": "integer"
+        },
         "created_at": {
             "type": [
                 "string",
