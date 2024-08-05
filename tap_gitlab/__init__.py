@@ -220,7 +220,7 @@ RESOURCES = {
     },
     'merge_request_resource_state_events': {
         'url':'/projects/{id}/merge_requests/{secondary_id}/resource_state_events',
-        'schema': load_schema('merge_request_resource_label_events'),
+        'schema': load_schema('merge_request_resource_state_events'),
         'key_properties': ['id', 'merge_request_iid'],
         'replication_method': 'FULL_TABLE',
     }
