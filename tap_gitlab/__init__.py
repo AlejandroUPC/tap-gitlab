@@ -419,9 +419,23 @@ def sync_issues(project):
 
             singer.write_record(entity, transformed_row, time_extracted=utils.now())
             utils.update_state(STATE, state_key, row['updated_at'])
+            sync_issues_resource_labels_events()
 
     singer.write_state(STATE)
+def sync_issues_resource_labels_events(project, issue, transformed_row):
+    entity = "resource_label_ecvents"
+    stream = CATALOG.get_stream(entity)
+    if stream is None or not stream.is_selected():
+        return
+    mdata = metadata.to_map(stream.metadata)
 
+    url = get_url(entity="merge_request_notes", id=project['id'], secondary_id=issue['iid'])
+    with Transformer(pre_hook=format_timestamp) as transformer:
+        for row in gen_request(url):
+            row['issue_id'] =  issue['iid']
+            row['user_id'] = row['user']['id']
+            transformed_row = transformer.transform(row, RESOURCES["merge_request_notes"]["schema"], mdata)
+            singer.write_record("resource_label_events", transformed_row, time_extracted=utils.now())
 def sync_merge_requests(project):
     entity = "merge_requests"
     stream = CATALOG.get_stream(entity)
@@ -852,8 +866,8 @@ def sync_project(pid):
 
       #  sync_members(data)
       #  sync_users(data)
-      #  sync_issues(data)
-        sync_merge_requests(data)
+        sync_issues(data)
+      #  sync_merge_requests(data)
       #  sync_commits(data)
       #  sync_branches(data)
       #  sync_milestones(data)

@@ -1,0 +1,48 @@
+{
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer"
+        },
+        "issue_id": {
+            "type": "integer"
+        },
+        "user_id": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "created_at": {
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time"
+        },
+        "resource_type": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "resource_id": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "label": {
+            "type": [
+                "object",
+                "null"
+            ]
+        },
+        "action": {
+            "type": [
+                "string",
+                "null"
+            ]
+        }
+    }
+}
