@@ -212,9 +212,9 @@ RESOURCES = {
         'replication_method': 'INCREMENTAL',
         'replication_keys': ['updated_at'],
     },
-    'resource_label_events': {
-        'url' :'/projects/{id}/issues/{iid}/resource_label_events',
-        'schema': load_schema('resource_label_events'),
+    'merge_request_resource_label_events': {
+        'url' :'/projects/{id}/issues/{iid}/merge_request_resource_label_events',
+        'schema': load_schema('merge_request_resource_label_events'),
         'key_properties': ['id', 'iid'],
         'replication_method': 'FULL_TABLE',
     }
@@ -425,23 +425,9 @@ def sync_issues(project):
 
             singer.write_record(entity, transformed_row, time_extracted=utils.now())
             utils.update_state(STATE, state_key, row['updated_at'])
-            sync_issues_resource_labels_events()
 
     singer.write_state(STATE)
-def sync_issues_resource_labels_events(project, issue, transformed_row):
-    entity = "resource_label_events"
-    stream = CATALOG.get_stream(entity)
-    if stream is None or not stream.is_selected():
-        return
-    mdata = metadata.to_map(stream.metadata)
 
-    url = get_url(entity="merge_request_notes", id=project['id'], secondary_id=issue['iid'])
-    with Transformer(pre_hook=format_timestamp) as transformer:
-        for row in gen_request(url):
-            row['issue_id'] =  issue['iid']
-            row['user_id'] = row['user']['id']
-            transformed_row = transformer.transform(row, RESOURCES["merge_request_notes"]["schema"], mdata)
-            singer.write_record("resource_label_events", transformed_row, time_extracted=utils.now())
 def sync_merge_requests(project):
     entity = "merge_requests"
     stream = CATALOG.get_stream(entity)
@@ -497,6 +483,7 @@ def sync_merge_requests(project):
             # (if it has changed, new commits may be there to fetch)
             sync_merge_request_commits(project, transformed_row)
             sync_merge_request_notes(project, transformed_row)
+            sync_merge_request_resource_label_events(project, transformed_row)
 
     singer.write_state(STATE)
 
@@ -536,6 +523,22 @@ def sync_merge_request_notes(project, merge_request):
             transformed_row = transformer.transform(row, RESOURCES["merge_request_notes"]["schema"], mdata)
             singer.write_record("merge_request_notes", transformed_row, time_extracted=utils.now())
             utils.update_state(STATE, state_key, row['updated_at'])
+
+def sync_merge_request_resource_label_events(project, issue, transformed_row):
+    entity = "merge_request_resource_label_events"
+    stream = CATALOG.get_stream(entity)
+    if stream is None or not stream.is_selected():
+        return
+    mdata = metadata.to_map(stream.metadata)
+
+    url = get_url(entity="merge_request_notes", id=project['id'], secondary_id=issue['iid'])
+    with Transformer(pre_hook=format_timestamp) as transformer:
+        for row in gen_request(url):
+            row['issue_id'] =  issue['iid']
+            row['user_id'] = row['user']['id']
+            transformed_row = transformer.transform(row, RESOURCES["merge_request_notes"]["schema"], mdata)
+            singer.write_record("merge_request_resource_label_events", transformed_row, time_extracted=utils.now())
+
 def sync_releases(project):
     entity = "releases"
     stream = CATALOG.get_stream(entity)
