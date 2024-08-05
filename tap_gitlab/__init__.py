@@ -524,7 +524,7 @@ def sync_merge_request_notes(project, merge_request):
             singer.write_record("merge_request_notes", transformed_row, time_extracted=utils.now())
             utils.update_state(STATE, state_key, row['updated_at'])
 
-def sync_merge_request_resource_label_events(project, merge_request, transformed_row):
+def sync_merge_request_resource_label_events(project, merge_request):
     entity = "merge_request_resource_label_events"
     stream = CATALOG.get_stream(entity)
     if stream is None or not stream.is_selected():
@@ -532,7 +532,6 @@ def sync_merge_request_resource_label_events(project, merge_request, transformed
     mdata = metadata.to_map(stream.metadata)
 
     url = get_url(entity="merge_request_resource_label_events", id=project['id'], secondary_id=merge_request['iid'])
-    raise ValueError(url)
     with Transformer(pre_hook=format_timestamp) as transformer:
         for row in gen_request(url):
             row['merge_request_id'] =  merge_request['merge_request_iid']
