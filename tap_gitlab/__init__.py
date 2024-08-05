@@ -217,6 +217,12 @@ RESOURCES = {
         'schema': load_schema('merge_request_resource_label_events'),
         'key_properties': ['id', 'merge_request_iid'],
         'replication_method': 'FULL_TABLE',
+    },
+    'merge_request_resource_state_events': {
+        'url':'/projects/{id}/merge_requests/{secondary_id}/resource_state_events',
+        'schema': load_schema('merge_request_resource_label_events'),
+        'key_properties': ['id', 'merge_request_iid'],
+        'replication_method': 'FULL_TABLE',
     }
 }
 
@@ -484,6 +490,7 @@ def sync_merge_requests(project):
             sync_merge_request_commits(project, transformed_row)
             sync_merge_request_notes(project, transformed_row)
             sync_merge_request_resource_label_events(project, transformed_row)
+            sync_merge_request_resource_state_events(project, transformed_row)
 
     singer.write_state(STATE)
 
@@ -534,10 +541,26 @@ def sync_merge_request_resource_label_events(project, merge_request):
     url = get_url(entity="merge_request_resource_label_events", id=project['id'], secondary_id=merge_request['iid'])
     with Transformer(pre_hook=format_timestamp) as transformer:
         for row in gen_request(url):
-            row['merge_request_id'] =  merge_request['iid']
+            row['merge_request_iid'] =  merge_request['iid']
             row['user_id'] = row['user']['id']
             transformed_row = transformer.transform(row, RESOURCES["merge_request_resource_label_events"]["schema"], mdata)
             singer.write_record("merge_request_resource_label_events", transformed_row, time_extracted=utils.now())
+
+def sync_merge_request_resource_state_events(project, merge_request):
+    entity = "merge_request_resource_state_events"
+    stream = CATALOG.get_stream(entity)
+    if stream is None or not stream.is_selected():
+        return
+    mdata = metadata.to_map(stream.metadata)
+
+    url = get_url(entity="merge_request_resource_state_events", id=project['id'], secondary_id=merge_request['iid'])
+    with Transformer(pre_hook=format_timestamp) as transformer:
+        for row in gen_request(url):
+            row['merge_request_iid'] =  merge_request['iid']
+            row['user_id'] = row['user']['id']
+            transformed_row = transformer.transform(row, RESOURCES["merge_request_resource_state_events"]["schema"], mdata)
+            singer.write_record("merge_request_resource_state_events", transformed_row, time_extracted=utils.now())
+
 
 def sync_releases(project):
     entity = "releases"

@@ -32,13 +32,7 @@
                 "null"
             ]
         },
-        "label": {
-            "type": [
-                "object",
-                "null"
-            ]
-        },
-        "action": {
+        "state": {
             "type": [
                 "string",
                 "null"
