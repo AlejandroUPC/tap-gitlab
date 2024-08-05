@@ -531,12 +531,12 @@ def sync_merge_request_resource_label_events(project, issue, transformed_row):
         return
     mdata = metadata.to_map(stream.metadata)
 
-    url = get_url(entity="merge_request_notes", id=project['id'], secondary_id=issue['iid'])
+    url = get_url(entity="merge_request_resource_label_events", id=project['id'], secondary_id=issue['iid'])
     with Transformer(pre_hook=format_timestamp) as transformer:
         for row in gen_request(url):
             row['issue_id'] =  issue['iid']
             row['user_id'] = row['user']['id']
-            transformed_row = transformer.transform(row, RESOURCES["merge_request_notes"]["schema"], mdata)
+            transformed_row = transformer.transform(row, RESOURCES["merge_request_resource_label_events"]["schema"], mdata)
             singer.write_record("merge_request_resource_label_events", transformed_row, time_extracted=utils.now())
 
 def sync_releases(project):
