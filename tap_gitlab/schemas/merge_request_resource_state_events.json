@@ -4,7 +4,7 @@
         "id": {
             "type": "integer"
         },
-        "merge_request_id": {
+        "merge_request_iid": {
             "type": "integer"
         },
         "user_id": {
