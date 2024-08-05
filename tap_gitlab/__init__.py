@@ -211,6 +211,12 @@ RESOURCES = {
         'key_properties': ['id', 'merge_request_iid'],
         'replication_method': 'INCREMENTAL',
         'replication_keys': ['updated_at'],
+    },
+    'resource_label_events': {
+        'url' :'/projects/{id}/issues/{iid}/resource_label_events',
+        'schema': load_schema('resource_label_events'),
+        'key_properties': ['id', 'iid'],
+        'replication_method': 'FULL_TABLE',
     }
 }
 
@@ -423,7 +429,7 @@ def sync_issues(project):
 
     singer.write_state(STATE)
 def sync_issues_resource_labels_events(project, issue, transformed_row):
-    entity = "resource_label_ecvents"
+    entity = "resource_label_events"
     stream = CATALOG.get_stream(entity)
     if stream is None or not stream.is_selected():
         return
