@@ -213,7 +213,7 @@ RESOURCES = {
         'replication_keys': ['updated_at'],
     },
     'merge_request_resource_label_events': {
-        'url' :'/projects/{id}/issues/{iid}/merge_request_resource_label_events',
+        'url':'/projects/{id}/merge_requests/{secondary_id}/resource_label_events',
         'schema': load_schema('merge_request_resource_label_events'),
         'key_properties': ['id', 'merge_request_iid'],
         'replication_method': 'FULL_TABLE',
@@ -532,6 +532,7 @@ def sync_merge_request_resource_label_events(project, merge_request, transformed
     mdata = metadata.to_map(stream.metadata)
 
     url = get_url(entity="merge_request_resource_label_events", id=project['id'], secondary_id=merge_request['iid'])
+    raise ValueError(url)
     with Transformer(pre_hook=format_timestamp) as transformer:
         for row in gen_request(url):
             row['merge_request_id'] =  merge_request['merge_request_iid']
@@ -873,19 +874,19 @@ def sync_project(pid):
 
     if data['last_activity_at'] >= get_start(state_key):
 
-      #  sync_members(data)
-      #  sync_users(data)
+        sync_members(data)
+        sync_users(data)
         sync_issues(data)
-      #  sync_merge_requests(data)
-      #  sync_commits(data)
-      #  sync_branches(data)
-      #  sync_milestones(data)
-      #  sync_labels(data)
-      #  sync_releases(data)
-      #  sync_tags(data)
-      #  sync_pipelines(data)
-      #  sync_vulnerabilities(data)
-      #  sync_variables(data)
+        sync_merge_requests(data)
+        sync_commits(data)
+        sync_branches(data)
+        sync_milestones(data)
+        sync_labels(data)
+        sync_releases(data)
+        sync_tags(data)
+        sync_pipelines(data)
+        sync_vulnerabilities(data)
+        sync_variables(data)
 
         if not stream.is_selected():
             return
