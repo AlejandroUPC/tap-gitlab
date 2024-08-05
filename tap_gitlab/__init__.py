@@ -534,7 +534,7 @@ def sync_merge_request_resource_label_events(project, merge_request):
     url = get_url(entity="merge_request_resource_label_events", id=project['id'], secondary_id=merge_request['iid'])
     with Transformer(pre_hook=format_timestamp) as transformer:
         for row in gen_request(url):
-            row['merge_request_id'] =  merge_request['merge_request_iid']
+            row['merge_request_id'] =  merge_request['iid']
             row['user_id'] = row['user']['id']
             transformed_row = transformer.transform(row, RESOURCES["merge_request_resource_label_events"]["schema"], mdata)
             singer.write_record("merge_request_resource_label_events", transformed_row, time_extracted=utils.now())
