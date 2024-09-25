@@ -1,5 +1,5 @@
 {
-    "type": "object",
+    "type": ["null", "object"], 
     "properties": {
         "archived": {
             "type": ["null", "boolean"]
@@ -63,7 +63,7 @@
             "type": ["null", "string"]
         },
         "namespace": {
-            "type": "object",
+            "type": ["null", "object"], 
             "properties": {
                 "id": {
                     "type": ["null", "integer"]
@@ -102,7 +102,7 @@
                 {
                     "type": "array",
                     "items": {
-                        "type": "object",
+                        "type": ["null", "object"], 
                         "properties": {
                             "group_id": {
                                 "type": ["null", "integer"]

@@ -1,5 +1,5 @@
 {
-    "type": "object",
+    "type": ["null", "object"], 
     "properties": {
         "id": {
             "type": ["null", "string"]
@@ -78,7 +78,7 @@
             ]
         },
         "stats": {
-            "type": "object",
+            "type": ["null", "object"], 
             "properties": {
                 "additions": {
                   "type": ["null", "integer"]

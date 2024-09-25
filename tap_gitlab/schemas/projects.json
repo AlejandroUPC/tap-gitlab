@@ -1,5 +1,5 @@
 {
-    "type": "object",
+    "type": ["null", "object"], 
     "properties": {
         "approvals_before_merge": {
             "type": ["null", "integer"]
@@ -78,7 +78,7 @@
             "type": ["null", "string"]
         },
         "namespace": {
-            "type": "object",
+            "type": ["null", "object"], 
             "properties": {
                 "id": {
                     "type": ["null", "integer"]
@@ -119,12 +119,12 @@
             "type": ["null", "string"]
         },
         "permissions": {
-            "type": "object",
+            "type": ["null", "object"], 
             "properties": {
                 "group_access": {
                     "anyOf": [
                         {
-                            "type": "object",
+                            "type": ["null", "object"], 
                             "properties": {
                                 "access_level": {
                                     "type": ["null", "integer"]
@@ -142,7 +142,7 @@
                 "project_access": {
                     "anyOf": [
                         {
-                            "type": "object",
+                            "type": ["null", "object"], 
                             "properties": {
                                 "access_level": {
                                     "type": ["null", "integer"]
@@ -176,7 +176,7 @@
                 {
                     "type": "array",
                     "items": {
-                        "type": "object",
+                        "type": ["null", "object"], 
                         "properties": {
                             "group_id": {
                                 "type": ["null", "integer"]
@@ -205,7 +205,7 @@
             "type": ["null", "integer"]
         },
         "statistics": {
-            "type": "object",
+            "type": ["null", "object"], 
             "properties": {
                 "commit_count": {
                     "type": ["null", "integer"]
