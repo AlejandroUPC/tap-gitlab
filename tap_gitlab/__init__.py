@@ -445,7 +445,7 @@ def sync_issues_resource_labels_events(project, issue, transformed_row):
     with Transformer(pre_hook=format_timestamp) as transformer:
         for row in gen_request(url):
             row['issue_id'] =  issue['iid']
-            row['user_id'] = row['user']['id']
+            row['user_id'] = row.get('user', {}).get('id')
             transformed_row = transformer.transform(row, RESOURCES["merge_request_notes"]["schema"], mdata)
             singer.write_record("resource_label_events", transformed_row, time_extracted=utils.now())
 def sync_merge_requests(project):
@@ -556,7 +556,7 @@ def sync_merge_request_resource_label_events(project, merge_request):
     with Transformer(pre_hook=format_timestamp) as transformer:
         for row in gen_request(url):
             row['merge_request_iid'] =  merge_request['iid']
-            row['user_id'] = row['user']['id']
+            row['user_id'] = row.get('user',{}).get('id')
             transformed_row = transformer.transform(row, RESOURCES["merge_request_resource_label_events"]["schema"], mdata)
             singer.write_record("merge_request_resource_label_events", transformed_row, time_extracted=utils.now())
 
@@ -571,7 +571,7 @@ def sync_merge_request_resource_state_events(project, merge_request):
     with Transformer(pre_hook=format_timestamp) as transformer:
         for row in gen_request(url):
             row['merge_request_iid'] =  merge_request['iid']
-            row['user_id'] = row['user']['id']
+            row['user_id'] = row.get('user', {}).get('id')
             transformed_row = transformer.transform(row, RESOURCES["merge_request_resource_state_events"]["schema"], mdata)
             singer.write_record("merge_request_resource_state_events", transformed_row, time_extracted=utils.now())
 
@@ -910,19 +910,19 @@ def sync_project(pid):
 
     if data['last_activity_at'] >= get_start(state_key):
 
-      #  sync_members(data)
-      #  sync_users(data)
+        sync_members(data)
+        sync_users(data)
         sync_issues(data)
-      #  sync_merge_requests(data)
-      #  sync_commits(data)
-      #  sync_branches(data)
-      #  sync_milestones(data)
-      #  sync_labels(data)
-      #  sync_releases(data)
-      #  sync_tags(data)
-      #  sync_pipelines(data)
-      #  sync_vulnerabilities(data)
-      #  sync_variables(data)
+        sync_merge_requests(data)
+        sync_commits(data)
+        sync_branches(data)
+        sync_milestones(data)
+        sync_labels(data)
+        sync_releases(data)
+        sync_tags(data)
+        sync_pipelines(data)
+        sync_vulnerabilities(data)
+        sync_variables(data)
 
         if not stream.is_selected():
             return
