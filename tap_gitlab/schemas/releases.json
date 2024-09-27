@@ -1,5 +1,5 @@
 {
-    "type": "object",
+    "type": ["null", "object"], 
     "properties": {
         "tag_name": {
             "type": ["null", "string"]

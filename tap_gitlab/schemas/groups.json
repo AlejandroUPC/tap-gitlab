@@ -1,5 +1,5 @@
 {
-    "type": "object",
+    "type": ["null", "object"], 
     "properties": {
         "id": {
             "type": ["null", "integer"]
@@ -39,7 +39,7 @@
                 {
                     "type": "array",
                     "items": {
-                        "type": "object",
+                        "type": ["null", "object"], 
                         "properties": {
                             "id": {
                                 "type": ["null", "integer"]

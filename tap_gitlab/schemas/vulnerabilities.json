@@ -1,5 +1,5 @@
 {
-  "type": "object",
+  "type": ["null", "object"], 
   "properties": {
     "author_id": {
       "type": [
@@ -59,7 +59,7 @@
       ]
     },
     "finding": {
-      "type": "object",
+      "type": ["null", "object"], 
       "properties": {
         "confidence": {
           "type": [
@@ -193,7 +193,7 @@
       ]
     },
     "project": {
-      "type": "object",
+      "type": ["null", "object"], 
       "properties": {
         "created_at": {
           "anyOf": [

@@ -1,5 +1,5 @@
 {
-    "type": "object",
+    "type": ["null", "object"], 
     "properties": {
         "project_id": {
             "type": ["null", "integer"]
@@ -26,7 +26,7 @@
             "type": ["null", "string"]
         },
         "user": {
-            "type": "object",
+            "type": ["null", "object"], 
             "properties": {
                 "name": {
                   "type": "string"
