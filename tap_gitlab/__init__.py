@@ -445,7 +445,11 @@ def sync_issues_resource_labels_events(project, issue, transformed_row):
     with Transformer(pre_hook=format_timestamp) as transformer:
         for row in gen_request(url):
             row['issue_id'] =  issue['iid']
-            row['user_id'] = row.get('user', {}).get('id')
+            user_data = row.get('user', {})
+            if user_data:
+                row['user_id'] = user_data.get('id')
+            else:
+                user_data['user_id'] = None
             transformed_row = transformer.transform(row, RESOURCES["merge_request_notes"]["schema"], mdata)
             singer.write_record("resource_label_events", transformed_row, time_extracted=utils.now())
 def sync_merge_requests(project):
@@ -556,7 +560,11 @@ def sync_merge_request_resource_label_events(project, merge_request):
     with Transformer(pre_hook=format_timestamp) as transformer:
         for row in gen_request(url):
             row['merge_request_iid'] =  merge_request['iid']
-            row['user_id'] = row.get('user',{}).get('id')
+            user_data = row.get('user',{})
+            if user_data:
+                row['user_id'] = user_data.get('id')
+            else:
+                row['user_id'] = None
             transformed_row = transformer.transform(row, RESOURCES["merge_request_resource_label_events"]["schema"], mdata)
             singer.write_record("merge_request_resource_label_events", transformed_row, time_extracted=utils.now())
 
@@ -571,7 +579,11 @@ def sync_merge_request_resource_state_events(project, merge_request):
     with Transformer(pre_hook=format_timestamp) as transformer:
         for row in gen_request(url):
             row['merge_request_iid'] =  merge_request['iid']
-            row['user_id'] = row.get('user', {}).get('id')
+            user_data = row.get('user', {})
+            if user_data:
+                row['user_id'] = row.get('user', {}).get('id')
+            else:
+                row['user_id'] = None
             transformed_row = transformer.transform(row, RESOURCES["merge_request_resource_state_events"]["schema"], mdata)
             singer.write_record("merge_request_resource_state_events", transformed_row, time_extracted=utils.now())
 
